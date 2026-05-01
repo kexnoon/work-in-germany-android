@@ -1,0 +1,14 @@
+/build/
+/release/
+/captures/
+/.externalNativeBuild/
+/.cxx/
+/.idea/
+
+*.apk
+*.ap_
+*.aab
+*.dex
+
+*.jks
+*.keystore
