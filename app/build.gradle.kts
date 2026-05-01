@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "de.telma.work_in_germany_android"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "de.telma.work_in_germany_android"
