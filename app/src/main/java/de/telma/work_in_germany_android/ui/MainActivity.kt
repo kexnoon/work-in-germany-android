@@ -1,4 +1,4 @@
-package de.telma.work_in_germany_android
+package de.telma.work_in_germany_android.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
