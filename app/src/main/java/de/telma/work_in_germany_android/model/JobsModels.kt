@@ -1,5 +1,8 @@
 package de.telma.work_in_germany_android.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Job(
     val id: String,
     val company: String,

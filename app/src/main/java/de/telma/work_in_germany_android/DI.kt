@@ -7,6 +7,8 @@ import de.telma.work_in_germany_android.network.RemoteDataSource
 import de.telma.work_in_germany_android.network.RemoteDataSourceImpl
 import de.telma.work_in_germany_android.storage.LocalDataSource
 import de.telma.work_in_germany_android.storage.LocalDataSourceImpl
+import kotlinx.serialization.json.Json
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val uiModule = module {
@@ -23,7 +25,19 @@ val dataModule = module {
 }
 
 val storageModule = module {
-    single<LocalDataSource> { LocalDataSourceImpl() }
+    single {
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
+    }
+
+    single<LocalDataSource> {
+        LocalDataSourceImpl(
+            rootDir = androidContext().filesDir,
+            json = get()
+        )
+    }
 }
 
 val networkModule = module {

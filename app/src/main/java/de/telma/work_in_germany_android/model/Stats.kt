@@ -1,7 +1,9 @@
 package de.telma.work_in_germany_android.model
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class JobCategory (
     val name: String,
     val amount: Int
@@ -11,6 +13,7 @@ data class JobCategory (
     override fun hashCode(): Int = name.hashCode()
 }
 
+@Serializable
 data class Stats (
     @SerialName("total_jobs")
     val totalJobs: Int,
