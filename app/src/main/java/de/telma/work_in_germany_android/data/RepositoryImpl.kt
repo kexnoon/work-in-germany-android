@@ -18,17 +18,22 @@ class RepositoryImpl(
     override val cache: StateFlow<JobCacheSnapshot?> = _cache.asStateFlow()
 
     override suspend fun sync(): Repository.CacheUpdateResult {
-        var result: Repository.CacheUpdateResult = Repository.CacheUpdateResult.Unchanged
         try {
             val localFilesExist = localDataSource.checkIfFilesExist()
             if (!localFilesExist) {
-                fetchRemote()
+                val remoteStats = remoteDataSource.fetchStats().toDomain()
+                val remoteJobs = remoteDataSource.fetchJobs().toDomainJobs(remoteStats.categories)
+
+                localDataSource.saveJobs(remoteJobs)
+                localDataSource.saveStats(remoteStats)
             } else {
                 val localStats = localDataSource.getStats()
                 val remoteStats = remoteDataSource.fetchStats().toDomain()
 
                 if (localStats.lastUpdated != remoteStats.lastUpdated) {
-                    fetchRemote()
+                    val remoteJobs = remoteDataSource.fetchJobs().toDomainJobs(remoteStats.categories)
+                    localDataSource.saveJobs(remoteJobs)
+                    localDataSource.saveStats(remoteStats)
                 } else {
                     return Repository.CacheUpdateResult.Unchanged
                 }
@@ -45,20 +50,9 @@ class RepositoryImpl(
                 lastUpdated = localStats.lastUpdated
             )
 
-            result = Repository.CacheUpdateResult.Updated
-
-            return result
+            return Repository.CacheUpdateResult.Updated
         } catch (t: Throwable) {
             return Repository.CacheUpdateResult.Error(t)
         }
-    }
-
-    private suspend fun fetchRemote() {
-        val remoteStats = remoteDataSource.fetchStats().toDomain()
-        val remoteJobs = remoteDataSource.fetchJobs().toDomainJobs(remoteStats.categories)
-
-        localDataSource.saveJobs(remoteJobs)
-        localDataSource.saveStats(remoteStats)
-
     }
 }
