@@ -15,6 +15,10 @@ class CachedJobs private constructor(
 ) {
     fun all(): List<Job> = allJobs
 
+    fun byCategory(category: JobCategory): List<Job> {
+        return jobsByCategory[category] ?: emptyList()
+    }
+
     fun page(
         category: JobCategory? = null,
         offset: Int,
@@ -24,10 +28,6 @@ class CachedJobs private constructor(
         val from = offset.coerceAtLeast(0)
         val to = (offset + limit).coerceAtMost(source.size)
         return if (from < to) source.subList(from, to) else emptyList()
-    }
-
-    fun byCategory(category: JobCategory): List<Job> {
-        return jobsByCategory[category] ?: emptyList()
     }
 
     fun byId(id: String): Job? {

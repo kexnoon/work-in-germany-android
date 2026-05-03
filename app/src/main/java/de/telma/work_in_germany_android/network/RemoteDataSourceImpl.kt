@@ -1,18 +1,17 @@
 package de.telma.work_in_germany_android.network
 
-import androidx.annotation.Discouraged
-import de.telma.work_in_germany_android.model.Job
-import de.telma.work_in_germany_android.model.Stats
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import de.telma.work_in_germany_android.network.model.RemoteJobsResponse
+import de.telma.work_in_germany_android.network.model.RemoteStats
 
 class RemoteDataSourceImpl() : RemoteDataSource {
 
-    override suspend fun fetchJobs(): List<Job> = withContext(Dispatchers.IO) {
+    @Throws(JobFetchingException::class)
+    override suspend fun fetchJobs(): RemoteJobsResponse {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchStats(): Stats = withContext(Dispatchers.IO) {
+    @Throws(StatsFetchingException::class)
+    override suspend fun fetchStats(): RemoteStats {
         TODO("Not yet implemented")
     }
 }

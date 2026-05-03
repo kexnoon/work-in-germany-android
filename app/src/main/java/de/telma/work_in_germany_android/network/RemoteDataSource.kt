@@ -1,9 +1,16 @@
 package de.telma.work_in_germany_android.network
 
-import de.telma.work_in_germany_android.model.Job
-import de.telma.work_in_germany_android.model.Stats
+import de.telma.work_in_germany_android.network.model.RemoteJobsResponse
+import de.telma.work_in_germany_android.network.model.RemoteStats
+import kotlin.jvm.Throws
 
 interface RemoteDataSource {
-    suspend fun fetchJobs(): List<Job>
-    suspend fun fetchStats(): Stats
+    @Throws(JobFetchingException::class)
+    suspend fun fetchJobs(): RemoteJobsResponse
+
+    @Throws(StatsFetchingException::class)
+    suspend fun fetchStats(): RemoteStats
 }
+
+class JobFetchingException(message: String, cause: Throwable? = null) : Exception(message, cause)
+class StatsFetchingException(message: String, cause: Throwable? = null) : Exception(message, cause)

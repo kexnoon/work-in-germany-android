@@ -6,18 +6,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class LocalDataSourceImpl() : LocalDataSource {
+
+    override suspend fun checkIfFilesExist(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    @Throws(StatsRetrievalException::class)
     override suspend fun getStats(): Stats = withContext(Dispatchers.IO) {
         TODO("Not yet implemented")
     }
 
+    @Throws(JobsRetrievalException::class)
     override suspend fun getJobs(): List<Job> = withContext(Dispatchers.IO) {
         TODO("Not yet implemented")
     }
 
+    @Throws(StatsStorageException::class)
     override suspend fun saveStats(stats: Stats) = withContext(Dispatchers.IO) {
         TODO("Not yet implemented")
     }
 
+    @Throws(JobsStorageException::class)
     override suspend fun saveJobs(jobs: List<Job>) = withContext(Dispatchers.IO) {
         TODO("Not yet implemented")
     }

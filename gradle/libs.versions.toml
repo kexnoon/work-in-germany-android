@@ -13,12 +13,14 @@ koin-bom = "4.2.1"
 ktor = "3.4.3"
 navigation = "1.1.1"
 paging = "3.4.2"
+turbine = "1.2.1"
 
 
 [libraries]
 # Core
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
