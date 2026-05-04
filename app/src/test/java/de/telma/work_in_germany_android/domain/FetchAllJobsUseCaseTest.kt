@@ -1,10 +1,13 @@
 package de.telma.work_in_germany_android.domain
 
 import de.telma.work_in_germany_android.data.Repository
+import de.telma.work_in_germany_android.data.fakes.FakeRepository
 import de.telma.work_in_germany_android.data.model.CachedJobs
 import de.telma.work_in_germany_android.data.model.JobCacheSnapshot
+import de.telma.work_in_germany_android.job
 import de.telma.work_in_germany_android.model.Job
 import de.telma.work_in_germany_android.model.JobCategory
+import de.telma.work_in_germany_android.snapshot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
@@ -80,49 +83,4 @@ class FetchAllJobsUseCaseTest {
         assertEquals(FetchAllJobsUseCase.Result.Error(throwable), result)
     }
 
-    private class FakeRepository(
-        initialSnapshot: JobCacheSnapshot? = null,
-        private val syncResult: Repository.CacheUpdateResult = Repository.CacheUpdateResult.Updated
-    ) : Repository {
-        private val cacheFlow = MutableStateFlow(initialSnapshot)
-
-        override val cache: StateFlow<JobCacheSnapshot?> = cacheFlow
-
-        override suspend fun sync(): Repository.CacheUpdateResult = syncResult
-    }
-
-    private companion object {
-        fun snapshot(
-            jobs: List<Job>,
-            categories: List<JobCategory>
-        ): JobCacheSnapshot {
-            return JobCacheSnapshot(
-                jobs = CachedJobs.from(jobs),
-                categories = categories,
-                lastUpdated = "2026-05-04 12:00 UTC"
-            )
-        }
-
-        fun job(
-            id: String,
-            category: JobCategory,
-            postedAt: String = "2026-05-04"
-        ): Job {
-            return Job(
-                id = id,
-                company = "Company $id",
-                companyType = "product",
-                title = "Android Developer",
-                location = "Berlin",
-                url = "https://example.com/$id",
-                postedAt = postedAt,
-                category = category,
-                language = "english",
-                visa = "yes",
-                source = "source",
-                lastSeen = "2026-05-04T12:00:00+00:00",
-                firstSeen = "2026-05-04T12:00:00+00:00"
-            )
-        }
-    }
 }

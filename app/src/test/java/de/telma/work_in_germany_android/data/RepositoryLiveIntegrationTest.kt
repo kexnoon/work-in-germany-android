@@ -45,16 +45,6 @@ class RepositoryLiveIntegrationTest {
         }
     }
 
-    @After
-    fun tearDown() {
-        if (::client.isInitialized) {
-            client.close()
-        }
-        if (::rootDir.isInitialized) {
-            rootDir.deleteRecursively()
-        }
-    }
-
     @Test
     fun `sync with real endpoints downloads saves and populates cache`() = runBlocking {
         val localDataSource = LocalDataSourceImpl(
@@ -85,6 +75,16 @@ class RepositoryLiveIntegrationTest {
             assertTrue(localDataSource.getStats().lastUpdated.isNotBlank())
 
             cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @After
+    fun tearDown() {
+        if (::client.isInitialized) {
+            client.close()
+        }
+        if (::rootDir.isInitialized) {
+            rootDir.deleteRecursively()
         }
     }
 }

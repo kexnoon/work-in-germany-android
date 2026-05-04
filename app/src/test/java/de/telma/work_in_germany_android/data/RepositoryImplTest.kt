@@ -1,15 +1,14 @@
 package de.telma.work_in_germany_android.data
 
 import app.cash.turbine.test
-import de.telma.work_in_germany_android.model.Job
+import de.telma.work_in_germany_android.job
 import de.telma.work_in_germany_android.model.JobCategory
-import de.telma.work_in_germany_android.model.Stats
-import de.telma.work_in_germany_android.network.RemoteDataSource
-import de.telma.work_in_germany_android.network.model.RemoteJob
-import de.telma.work_in_germany_android.network.model.RemoteJobsMetadata
-import de.telma.work_in_germany_android.network.model.RemoteJobsResponse
-import de.telma.work_in_germany_android.network.model.RemoteStats
-import de.telma.work_in_germany_android.storage.LocalDataSource
+import de.telma.work_in_germany_android.network.fakes.FakeRemoteDataSource
+import de.telma.work_in_germany_android.remoteJob
+import de.telma.work_in_germany_android.remoteJobsResponse
+import de.telma.work_in_germany_android.remoteStats
+import de.telma.work_in_germany_android.stats
+import de.telma.work_in_germany_android.storage.fakes.FakeLocalDataSource
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -321,147 +320,6 @@ class RepositoryImplTest {
             assertEquals(JobCategory("Software Engineering", 3338), job?.category)
             assertEquals(3338, job?.category?.amount)
             cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    private class FakeLocalDataSource(
-        private var stats: Stats = stats(),
-        private var jobs: List<Job> = emptyList(),
-        private val filesExist: Boolean = true,
-        private val saveJobsThrowable: Throwable? = null,
-        private val saveStatsThrowable: Throwable? = null
-    ) : LocalDataSource {
-        var saveJobsCalls = 0
-            private set
-
-        var saveStatsCalls = 0
-            private set
-
-        override suspend fun checkIfFilesExist(): Boolean = filesExist
-
-        override suspend fun getStats(): Stats = stats
-
-        override suspend fun getJobs(): List<Job> = jobs
-
-        override suspend fun saveJobs(jobs: List<Job>) {
-            saveJobsCalls++
-            saveJobsThrowable?.let { throw it }
-            this.jobs = jobs
-        }
-
-        override suspend fun saveStats(stats: Stats) {
-            saveStatsCalls++
-            saveStatsThrowable?.let { throw it }
-            this.stats = stats
-        }
-    }
-
-    private class FakeRemoteDataSource(
-        private val stats: RemoteStats = remoteStats(),
-        private val jobs: RemoteJobsResponse = remoteJobsResponse(),
-        private val statsThrowable: Throwable? = null,
-        private val jobsThrowable: Throwable? = null
-    ) : RemoteDataSource {
-        var fetchStatsCalls = 0
-            private set
-
-        var fetchJobsCalls = 0
-            private set
-
-        override suspend fun fetchJobs(): RemoteJobsResponse {
-            fetchJobsCalls++
-            jobsThrowable?.let { throw it }
-            return jobs
-        }
-
-        override suspend fun fetchStats(): RemoteStats {
-            fetchStatsCalls++
-            statsThrowable?.let { throw it }
-            return stats
-        }
-    }
-
-    private companion object {
-        fun stats(
-            lastUpdated: String = "2026-05-03 12:00 UTC",
-            categories: List<JobCategory> = listOf(JobCategory("Software Engineering", 1))
-        ): Stats {
-            return Stats(
-                totalJobs = categories.sumOf { it.amount },
-                visaFriendly = 0,
-                englishFriendly = 0,
-                companiesTracked = 0,
-                categories = categories,
-                lastUpdated = lastUpdated
-            )
-        }
-
-        fun remoteStats(
-            lastUpdated: String = "2026-05-03 12:00 UTC",
-            categories: Map<String, Int> = mapOf("Software Engineering" to 1)
-        ): RemoteStats {
-            return RemoteStats(
-                totalJobs = categories.values.sum(),
-                visaFriendly = 0,
-                englishFriendly = 0,
-                companiesTracked = 0,
-                categories = categories,
-                lastUpdated = lastUpdated
-            )
-        }
-
-        fun job(
-            id: String,
-            category: JobCategory = JobCategory("Software Engineering", 1),
-            postedAt: String = "2026-05-03"
-        ): Job {
-            return Job(
-                id = id,
-                company = "Company $id",
-                companyType = "product",
-                title = "Android Developer",
-                location = "Berlin",
-                url = "https://example.com/$id",
-                postedAt = postedAt,
-                category = category,
-                language = "english",
-                visa = "yes",
-                source = "source",
-                lastSeen = "2026-05-03T12:00:00+00:00",
-                firstSeen = "2026-05-03T12:00:00+00:00"
-            )
-        }
-
-        fun remoteJobsResponse(vararg jobs: RemoteJob): RemoteJobsResponse {
-            return RemoteJobsResponse(
-                metadata = RemoteJobsMetadata(
-                    total = jobs.size,
-                    lastUpdated = "2026-05-03 12:00 UTC"
-                ),
-                jobs = jobs.toList()
-            )
-        }
-
-        fun remoteJob(
-            id: String,
-            category: String = "Software Engineering",
-            postedAt: String = "2026-05-03"
-        ): RemoteJob {
-            return RemoteJob(
-                id = id,
-                company = "Company $id",
-                companyType = "product",
-                title = "Android Developer",
-                location = "Berlin",
-                url = "https://example.com/$id",
-                postedAt = postedAt,
-                category = category,
-                language = "english",
-                visa = "yes",
-                source = "source",
-                lastSeen = "2026-05-03T12:00:00+00:00",
-                firstSeen = "2026-05-03T12:00:00+00:00"
-            )
         }
     }
 }

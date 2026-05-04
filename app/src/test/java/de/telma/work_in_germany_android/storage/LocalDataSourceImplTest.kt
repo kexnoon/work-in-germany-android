@@ -1,8 +1,10 @@
 package de.telma.work_in_germany_android.storage
 
+import de.telma.work_in_germany_android.job
 import de.telma.work_in_germany_android.model.Job
 import de.telma.work_in_germany_android.model.JobCategory
 import de.telma.work_in_germany_android.model.Stats
+import de.telma.work_in_germany_android.stats
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.After
@@ -31,11 +33,6 @@ class LocalDataSourceImplTest {
             rootDir = rootDir,
             json = json
         )
-    }
-
-    @After
-    fun tearDown() {
-        rootDir.deleteRecursively()
     }
 
     @Test
@@ -118,41 +115,8 @@ class LocalDataSourceImplTest {
         Unit
     }
 
-    private companion object {
-        fun stats(
-            lastUpdated: String = "2026-05-04 12:00 UTC",
-            categories: List<JobCategory> = listOf(JobCategory("Software Engineering", 1))
-        ): Stats {
-            return Stats(
-                totalJobs = categories.sumOf { it.amount },
-                visaFriendly = 0,
-                englishFriendly = 0,
-                companiesTracked = 0,
-                categories = categories,
-                lastUpdated = lastUpdated
-            )
-        }
-
-        fun job(
-            id: String,
-            category: JobCategory,
-            postedAt: String = "2026-05-04"
-        ): Job {
-            return Job(
-                id = id,
-                company = "Company $id",
-                companyType = "product",
-                title = "Android Developer",
-                location = "Berlin",
-                url = "https://example.com/$id",
-                postedAt = postedAt,
-                category = category,
-                language = "english",
-                visa = "yes",
-                source = "source",
-                lastSeen = "2026-05-04T12:00:00+00:00",
-                firstSeen = "2026-05-04T12:00:00+00:00"
-            )
-        }
+    @After
+    fun tearDown() {
+        rootDir.deleteRecursively()
     }
 }
