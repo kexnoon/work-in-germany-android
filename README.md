@@ -1,6 +1,7 @@
 # work-in-germany Android Client
 
 This project is an Android Client for work-in-germany: a fully automated list of tech jobs in Germany
+
 Original repo with the list can be found [here](https://github.com/ashishtiwari03/work-in-germany)
 
 ## Credits:
