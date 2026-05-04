@@ -23,7 +23,7 @@ val uiModule = module {
 val domainModule = module {
     factory<FetchAllJobsUseCase> { FetchAllJobsUseCase(get()) }
     factory<GetJobByIdUseCase> { GetJobByIdUseCase(get()) }
-    factory<GetJobsByCategoryUseCase> { GetJobsByCategoryUseCase(get()) }
+    factory<GetAllJobsInCategory> { GetAllJobsInCategory(get()) }
 }
 
 val dataModule = module {

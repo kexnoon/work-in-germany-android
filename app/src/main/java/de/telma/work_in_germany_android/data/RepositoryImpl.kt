@@ -6,9 +6,11 @@ import de.telma.work_in_germany_android.data.util.toDomain
 import de.telma.work_in_germany_android.data.util.toDomainJobs
 import de.telma.work_in_germany_android.network.RemoteDataSource
 import de.telma.work_in_germany_android.storage.LocalDataSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 
 class RepositoryImpl(
     private val localDataSource: LocalDataSource,
@@ -17,7 +19,7 @@ class RepositoryImpl(
     private val _cache = MutableStateFlow<JobCacheSnapshot?>(null)
     override val cache: StateFlow<JobCacheSnapshot?> = _cache.asStateFlow()
 
-    override suspend fun sync(): Repository.CacheUpdateResult {
+    override suspend fun sync(): Repository.CacheUpdateResult = withContext(Dispatchers.Unconfined) {
         try {
             val localFilesExist = localDataSource.checkIfFilesExist()
             if (!localFilesExist) {
@@ -35,7 +37,7 @@ class RepositoryImpl(
                     localDataSource.saveJobs(remoteJobs)
                     localDataSource.saveStats(remoteStats)
                 } else {
-                    return Repository.CacheUpdateResult.Unchanged
+                    return@withContext Repository.CacheUpdateResult.Unchanged
                 }
             }
 
@@ -50,9 +52,9 @@ class RepositoryImpl(
                 lastUpdated = localStats.lastUpdated
             )
 
-            return Repository.CacheUpdateResult.Updated
+            return@withContext Repository.CacheUpdateResult.Updated
         } catch (t: Throwable) {
-            return Repository.CacheUpdateResult.Error(t)
+            return@withContext Repository.CacheUpdateResult.Error(t)
         }
     }
 }
