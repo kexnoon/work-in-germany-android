@@ -7,6 +7,11 @@ import de.telma.work_in_germany_android.network.RemoteDataSource
 import de.telma.work_in_germany_android.network.RemoteDataSourceImpl
 import de.telma.work_in_germany_android.storage.LocalDataSource
 import de.telma.work_in_germany_android.storage.LocalDataSourceImpl
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -41,5 +46,15 @@ val storageModule = module {
 }
 
 val networkModule = module {
-    single<RemoteDataSource> { RemoteDataSourceImpl() }
+    single<HttpClient> {
+        HttpClient(Android) {
+            install(ContentNegotiation) {
+                json(get())
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 10_000L
+            }
+        }
+    }
+    single<RemoteDataSource> { RemoteDataSourceImpl(get()) }
 }
